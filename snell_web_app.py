@@ -806,9 +806,9 @@ def show_visualization(sections_to_use, target_y_to_use, compare_straight_to_use
                             f"{comparison_data['straight_avg_speed']:.2f}"
                         ],
                         "% Difference": [
-                            f"{abs(comparison_data['time_saved_pct']):.1f}%",
-                            f"{abs(comparison_data['distance_pct']):.1f}%",
-                            f"{abs(comparison_data['speed_diff_pct']):.1f}%"
+                            f"{abs(comparison_data['time_saved_pct']):.2f}%",
+                            f"{abs(comparison_data['distance_pct']):.2f}%",
+                            f"{abs(comparison_data['speed_diff_pct']):.2f}%"
                         ]
                     })
                     
@@ -913,29 +913,33 @@ elif compute_button:
     try:
         sections = json.loads(sections_str.strip())
         
-        # Validate sections format
-        valid_sections = True
-        for section in sections:
-            if not isinstance(section, list) and not isinstance(section, tuple):
-                valid_sections = False
-                break
-            if len(section) != 2:
-                valid_sections = False
-                break
-            try:
-                float(section[0])
-                float(section[1])
-            except:
-                valid_sections = False
-                break
-        
-        if not valid_sections:
-            st.error("Invalid section format. Please use the format: [[distance1, speed1], [distance2, speed2], ...]")
+        # Check if there are too many sections
+        if len(sections) > 100:
+            st.error(f"Too many sections ({len(sections)}). Please limit to 100 sections for performance reasons.")
         else:
-            # Convert any lists to tuples
-            sections = [tuple(section) for section in sections]
-            show_visualization(sections, target_y, compare_straight)
+            # Validate sections format
+            valid_sections = True
+            for section in sections:
+                if not isinstance(section, list) and not isinstance(section, tuple):
+                    valid_sections = False
+                    break
+                if len(section) != 2:
+                    valid_sections = False
+                    break
+                try:
+                    float(section[0])
+                    float(section[1])
+                except:
+                    valid_sections = False
+                    break
             
+            if not valid_sections:
+                st.error("Invalid section format. Please use the format: [[distance1, speed1], [distance2, speed2], ...]")
+            else:
+                # Convert any lists to tuples
+                sections = [tuple(section) for section in sections]
+                show_visualization(sections, target_y, compare_straight)
+                
     except json.JSONDecodeError:
         st.error("Invalid JSON format. Please use the format: [[distance1, speed1], [distance2, speed2], ...]")
 
