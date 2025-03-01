@@ -492,10 +492,13 @@ def auto_scroll_to_element(element_id):
 if 'sidebar_state' not in st.session_state:
     st.session_state.sidebar_state = 'collapsed'
 
-# Set page config with initial sidebar state
+# Custom favicon URL
+favicon_url = "https://gallery.yopriceville.com/var/albums/Free-Clipart-Pictures/Decorative-Elements-PNG/Light_Effect_PNG_Clip_Art_Image.png?m=1629792209" 
+
+# Set page config with initial sidebar state and custom favicon
 st.set_page_config(
     page_title="Snell's Law Path Finder",
-    page_icon="🔍",
+    page_icon=favicon_url,  # Use custom favicon URL instead of "🔍"
     initial_sidebar_state=st.session_state.sidebar_state,
     layout="wide"
 )
@@ -663,6 +666,8 @@ with st.expander("📚 Problem Statement", expanded=st.session_state.intro_expan
     <br>The goal is to find the *shortest time* path from A to B. Of course, the *shortest distance* path is the straight line, 
     but the variation in speed across the map means that we can do better! For example, the straight line path in 
     this map takes ~13.5 days, but the optimal path takes only ~13.1 days.
+                
+    Expand the section below to see how I solved it.
     """, unsafe_allow_html=True)
 
 # Create a separate collapsible section for the technical details - closed by default
@@ -679,22 +684,40 @@ with st.expander("🔬 Technical Details: Please don't read this if you want to 
     This worked, but it was lowkey unsatisfying. So why not solve the problem by simulating light rays?
                 
     ### Light Simulation
-    A few things to note about light:
-    - [Fermat's principle](https://en.wikipedia.org/wiki/Fermat%27s_principle) states that light takes the path of least time
-    - [Snell's law](https://en.wikipedia.org/wiki/Snell%27s_law) gives the exact relationship between the angle of incidence and the angle of refraction between dissimilar mediums
-    - We can simulate the path of light through a series of mediums by applying Snell's law at the boundary between each medium (ensuring not to confuse velocity with index of refraction :D)
-    
-    We're almost there! If we knew the starting angle of the light ray, we could simulate the path of the light ray through the map. So, what is it?
-    
-    Hmm... Maybe this protractor will tell us, it should know about angles and stuff.
     """, unsafe_allow_html=True)
-                
-    st.image("https://i.imgur.com/V1VVKs3.png", width=300)
-    st.markdown("""
-    ...okay, fine. Let's do a [binary search](https://en.wikipedia.org/wiki/Binary_search_algorithm). 
-                
-    ### Binary Search
-    """, unsafe_allow_html=True)
+
+    light_col1, light_col2 = st.columns(2)
+    with light_col1:
+        st.markdown("""
+        A few things to note about light:
+        - [Fermat's principle](https://en.wikipedia.org/wiki/Fermat%27s_principle) states that light takes the path of least time
+        - [Snell's law](https://en.wikipedia.org/wiki/Snell%27s_law) gives the exact relationship between the angle of incidence and the angle of refraction between dissimilar mediums
+        - We can simulate the path of light through a series of mediums by applying Snell's law at the boundary between each medium (ensuring not to confuse velocity with index of refraction :D)
+        
+        We're almost there! If we knew the starting angle of the light ray, we could simulate the path of the light ray through the map. So, what is it?
+        
+        Hmm... Maybe this protractor will tell us, it should know about angles and stuff.
+        """, unsafe_allow_html=True)
+                    
+        st.image("https://i.imgur.com/V1VVKs3.png", width=300)
+        st.markdown("""
+        ...okay, fine. Let's do a [binary search](https://en.wikipedia.org/wiki/Binary_search_algorithm). 
+                    
+        ### Binary Search
+        """, unsafe_allow_html=True)
+    
+    with light_col2:
+        # Add a soft background behind the image with fading borders
+        st.markdown("""
+        <div style="
+                    background: radial-gradient(circle, rgba(240, 240, 255, 0.8) 50%, rgba(240, 240, 255, 0) 100%); 
+                    border-radius: 10px; 
+                    padding: 20px; 
+                    text-align: center;">
+            <img src="https://i.imgur.com/sRdKi0u.png" width="450" style="max-width: 100%;">
+        </div>
+        """, unsafe_allow_html=True)
+
 
     binary_search_col1, binary_search_col2 = st.columns(2)
     with binary_search_col1:
@@ -730,8 +753,7 @@ with st.expander("🔬 Technical Details: Please don't read this if you want to 
                 
 
     Thank you for reading! I've gone ahead and implemented a generalized version of this problem with visualizations 
-                (at the bottom of the page). 
-    Play around with the map generator and see if you can find any interesting patterns.
+                (at the bottom of the page). You can enter your own map, or generate a random one.
     If you have any questions, please reach out to me on [LinkedIn](https://www.linkedin.com/in/michael-antoun/)!
     """, unsafe_allow_html=True)
     
@@ -746,7 +768,6 @@ random_button_col1, random_button_col2, random_button_col3 = st.columns([1, 3, 1
 # Add a random button in the main content area - now positioned after the background info
 with random_button_col2:
     main_random_button = st.button("🎲 Generate Random Map 🎲", 
-                             help="Generate a random map with the current settings", 
                              type="primary",
                              on_click=update_random_sections,
                              use_container_width=True)
@@ -884,6 +905,9 @@ if main_random_button or (random_button if 'random_button' in locals() else Fals
     # Use the sections and target that were generated in the callback
     random_sections = st.session_state.random_sections
     random_target_y = st.session_state.random_target_y
+
+    if random_target_y is None or random_sections is None:
+        update_random_sections()
     
     # Create a unique ID for this visualization
     viz_id = f"viz-{int(time.time())}"
