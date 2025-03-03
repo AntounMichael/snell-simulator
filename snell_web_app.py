@@ -527,6 +527,10 @@ if 'num_sections' not in st.session_state:
     
 if 'compare_straight' not in st.session_state:
     st.session_state.compare_straight = True
+    
+# Add a flag to track if initial visualization has been shown
+if 'initial_viz_shown' not in st.session_state:
+    st.session_state.initial_viz_shown = False
 
 # Add a callback function to update the text area
 def update_random_sections():
@@ -966,6 +970,20 @@ elif compute_button:
                 
     except json.JSONDecodeError:
         st.error("Invalid JSON format. Please use the format: [[distance1, speed1], [distance2, speed2], ...]")
+
+# Automatically show initial visualization if it hasn't been shown yet
+elif not st.session_state.initial_viz_shown:
+    # Parse the default sections from the text area
+    try:
+        sections = json.loads(sections_str.strip())
+        # Convert any lists to tuples
+        sections = [tuple(section) for section in sections]
+        # Show the visualization
+        show_visualization(sections, target_y, compare_straight)
+        # Mark that we've shown the initial visualization
+        st.session_state.initial_viz_shown = True
+    except json.JSONDecodeError:
+        st.error("Invalid JSON format in default sections. Please check the format.")
 
 # Add custom CSS to style the sidebar toggle button
 st.markdown("""
