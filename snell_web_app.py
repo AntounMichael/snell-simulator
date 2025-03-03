@@ -685,26 +685,26 @@ with st.expander("📚 Problem Statement", expanded=st.session_state.intro_expan
     # Add buttons at the end of the first expander
     button_col1, button_col2, _ = st.columns([1, 1, 2])
     with button_col1:
-        st.markdown('<a href="#technical-details" class="button-link"><button style="width:100%; padding: 0.5rem; cursor: pointer; background-color: rgba(46, 204, 113, 0.5); color: white;">Continue to Technical Details ⬇️</button></a>', unsafe_allow_html=True)
+        st.markdown('<a href="#solution-details" class="button-link"><button style="width:100%; padding: 0.5rem; cursor: pointer; background-color: rgba(46, 204, 113, 0.5); color: white;">Continue to Solution Details ⬇️</button></a>', unsafe_allow_html=True)
     
     with button_col2:
         st.markdown('<a href="#visualization" class="button-link"><button style="width:100%; padding: 0.5rem; cursor: pointer; background-color: rgba(46, 204, 113, 0.5); color: white;">Jump to Visualization 📈</button></a>', unsafe_allow_html=True)
 
-# Add an anchor for the technical details section
-st.markdown('<div id="technical-details"></div>', unsafe_allow_html=True)
+# Add an anchor for the solution details section
+st.markdown('<div id="solution-details"></div>', unsafe_allow_html=True)
 
-# Add JavaScript to check URL and expand technical details if anchor is present
+# Add JavaScript to check URL and expand solution details if anchor is present
 st.markdown("""
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Check if URL contains the technical-details anchor
-    if (window.location.hash === '#technical-details') {
+    // Check if URL contains the solution-details anchor
+    if (window.location.hash === '#solution-details') {
         // Find the expander button and click it if it's not already expanded
         setTimeout(function() {
             const expanderButtons = document.querySelectorAll('button[aria-expanded="false"]');
             for (let button of expanderButtons) {
-                // Look for the technical details expander by checking the text content
-                if (button.textContent.includes('Technical Details')) {
+                // Look for the solution details expander by checking the text content
+                if (button.textContent.includes('Solution Details')) {
                     button.click();
                     break;
                 }
@@ -715,8 +715,8 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 """, unsafe_allow_html=True)
 
-# Create a separate collapsible section for the technical details - closed by default
-with st.expander("🔬 Technical Details: Please don't read this if you want to solve it yourself!", expanded=False):
+# Create a separate collapsible section for the solution details - closed by default
+with st.expander("🔬 Solution Details: Please don't read this if you want to solve it yourself!", expanded=False):
     st.markdown("""
     #### Gradient Descent
     In my first attempt, I used [gradient descent](https://en.wikipedia.org/wiki/Gradient_descent) to find the optimal path.  I had confidence this would work because the optimal path within any section must be a straight line,
