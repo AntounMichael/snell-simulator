@@ -473,20 +473,6 @@ def draw_interactive_path(sections, target_y, compare_straight=False):
     
     return fig, optimal_theta, optimal_time, optimal_distance, comparison_data
 
-# After imports and before main function, add this helper function
-def auto_scroll_to_element(element_id):
-    """Add JavaScript to auto-scroll to an element with the given ID"""
-    return st.markdown(f"""
-    <script>
-        // Wait for elements to render
-        setTimeout(function() {{
-            const element = document.getElementById('{element_id}');
-            if (element) {{
-                element.scrollIntoView({{behavior: 'smooth', block: 'start'}});
-            }}
-        }}, 200);  // Small delay to ensure elements are rendered
-    </script>
-    """, unsafe_allow_html=True)
 
 # Initialize sidebar state
 if 'sidebar_state' not in st.session_state:
@@ -630,6 +616,7 @@ st.markdown("""
 
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
     <h1 style="margin: 0;">Snell's Law Path Finder</h1>
+    <a href="#visualization" class="button-link" style="margin-right: 1rem;"><button style="width:100%; padding: 0.5rem; cursor: pointer; background-color: rgba(46, 204, 113, 0.5); color: white;">Jump to Visualization 📈</button></a>
     <a href="https://antounmichael.github.io" target="_blank" class="flashy-home-button">
         <span class="home-icon">🏠</span> <span style="text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Visit My Site!</span>
     </a>
@@ -670,9 +657,63 @@ with st.expander("📚 Problem Statement", expanded=st.session_state.intro_expan
     <br>The goal is to find the *shortest time* path from A to B. Of course, the *shortest distance* path is the straight line, 
     but the variation in speed across the map means that we can do better! For example, the straight line path in 
     this map takes ~13.5 days, but the optimal path takes only ~13.1 days.
-                
-    Expand the section below to see how I solved it.
     """, unsafe_allow_html=True)
+    
+    # Add CSS for the buttons
+    st.markdown("""
+    <style>
+    .button-link {
+        text-decoration: none;
+    }
+    .button-link button {
+        background-color: white;
+        color: black;
+        border: 2px solid #000;
+        border-radius: 4px;
+        transition: all 0.3s ease;
+        font-weight: 500;
+    }
+    .button-link button:hover {
+        background-color: black;
+        color: white;
+        border-color: #333;
+        transform: scale(1.02);
+    }
+    </style>
+    """, unsafe_allow_html=True)
+    
+    # Add buttons at the end of the first expander
+    button_col1, button_col2, _ = st.columns([1, 1, 2])
+    with button_col1:
+        st.markdown('<a href="#technical-details" class="button-link"><button style="width:100%; padding: 0.5rem; cursor: pointer; background-color: rgba(46, 204, 113, 0.5); color: white;">Continue to Technical Details ⬇️</button></a>', unsafe_allow_html=True)
+    
+    with button_col2:
+        st.markdown('<a href="#visualization" class="button-link"><button style="width:100%; padding: 0.5rem; cursor: pointer; background-color: rgba(46, 204, 113, 0.5); color: white;">Jump to Visualization 📈</button></a>', unsafe_allow_html=True)
+
+# Add an anchor for the technical details section
+st.markdown('<div id="technical-details"></div>', unsafe_allow_html=True)
+
+# Add JavaScript to check URL and expand technical details if anchor is present
+st.markdown("""
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if URL contains the technical-details anchor
+    if (window.location.hash === '#technical-details') {
+        // Find the expander button and click it if it's not already expanded
+        setTimeout(function() {
+            const expanderButtons = document.querySelectorAll('button[aria-expanded="false"]');
+            for (let button of expanderButtons) {
+                // Look for the technical details expander by checking the text content
+                if (button.textContent.includes('Technical Details')) {
+                    button.click();
+                    break;
+                }
+            }
+        }, 500); // Small delay to ensure DOM is fully loaded
+    }
+});
+</script>
+""", unsafe_allow_html=True)
 
 # Create a separate collapsible section for the technical details - closed by default
 with st.expander("🔬 Technical Details: Please don't read this if you want to solve it yourself!", expanded=False):
@@ -776,9 +817,13 @@ with random_button_col2:
                              on_click=update_random_sections,
                              use_container_width=True)
 
+# Add an anchor for the visualization section
+st.markdown('<div id="visualization"></div>', unsafe_allow_html=True)
+
 # Create placeholders for the plot and metrics in the main area
 plot_placeholder = st.empty()
 metrics_placeholder = st.empty()
+
 
 # Helper function to show plot and metrics
 def show_visualization(sections_to_use, target_y_to_use, compare_straight_to_use):
@@ -1024,7 +1069,3 @@ st.markdown("""
 }
 </style>
 """, unsafe_allow_html=True)
-
-if __name__ == "__main__":
-    pass  # No need to call main() since code now runs in global scope 
-    pass  # No need to call main() since code now runs in global scope 
